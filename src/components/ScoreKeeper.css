@@ -1,0 +1,65 @@
+@charset "UTF-8";
+.question-title, .question-sheet, .score-title, .score-sheet {
+  width: 7rem;
+  border-bottom: black solid 4px;
+  border-right: black solid 4px;
+  border-left: black solid 4px;
+  border-top: black solid 4px;
+  -webkit-box-shadow: 20px 38px 34px -26px rgba(0, 0, 0, 0.2);
+          box-shadow: 20px 38px 34px -26px rgba(0, 0, 0, 0.2);
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+}
+
+.score-title, .question-title {
+  background: black;
+  color: #8a1;
+}
+
+.question-sheet {
+  padding-left: 0.5rem;
+  padding-right: -0.5rem;
+  padding-bottom: 1rem;
+}
+
+.score-title, .question-title {
+  text-align: center;
+}
+
+.single-question {
+  color: black;
+  display: block;
+}
+
+.single-question {
+  height: 2rem;
+}
+
+.score-counter-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  height: 1.85rem;
+  border: black 1px solid;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+}
+
+.question-score-sheet-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.title-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+div[class^="score-counter-"], div[class*="score-counter-"] {
+  visibility: hidden;
+  -webkit-transition: 1s  ;
+  transition: 1s  ;
+}
+/*# sourceMappingURL=ScoreKeeper.css.map */
