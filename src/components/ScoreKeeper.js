@@ -11,7 +11,7 @@ export const ScoreKeeper = (props) => {
       </div>
       <div className="question-score-sheet-container">
         <div className="question-sheet">
-          {console.log(props)}
+          {/* {console.log(props)} */}
           {Object.entries(props).map(function (letter) {
             return (
               <div
@@ -26,7 +26,7 @@ export const ScoreKeeper = (props) => {
         </div>
         <div className="score-sheet">
           {Object.entries(props).map(function (letter) {
-            console.log(letter[1].counter);
+            // console.log(letter[1].counter);
             return (
               <div
                 style={{ display: letter[1].isHidden }}

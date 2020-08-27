@@ -6,6 +6,7 @@ import Home from "./layout/Home";
 import Beginner from "./layout/Beginner";
 import Intermediate from "./layout/Intermediate";
 import Advanced from "./layout/Advanced";
+import Introduction from "./layout/Introduction";
 
 const App = () => (
   <Router>
@@ -16,6 +17,7 @@ const App = () => (
           <Route exact path="/beginner" component={Beginner} />
           <Route exact path="/intermediate" component={Intermediate} />
           <Route exact path="/advanced" component={Advanced} />
+          <Route exact path="/introduction" component={Introduction} />
         </Switch>
       </section>
     </Fragment>

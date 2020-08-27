@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import "./Beginner.css";
 import { Banner } from "../components/Banner";
 import { ScoreKeeper } from "../components/ScoreKeeper";
+import MouseOverPopover from "../components/MouseOverPopover";
 
 export const Beginner = () => {
   const [beginnerQuestions, setBeginnerQuestions] = useState([
@@ -105,6 +106,10 @@ export const Beginner = () => {
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
 
+  const [currentAnswer, setCurrentAnswer] = useState(
+    beginnerQuestions[currentQuestion].answer
+  );
+
   const { guess } = userInput;
 
   const checkIfcurrentQuestionsHaveReachCounterFiveAndUpdate = (array) => {
@@ -122,10 +127,13 @@ export const Beginner = () => {
     setCurrentQuestionsArray(newQestions);
   };
 
-  const selectNewQuestionFromCurrentQuestions = () =>
-    setCurrentQuestion(currentQuestionsArray[Math.floor(Math.random() * 5)]);
+  const selectNewQuestionFromCurrentQuestions = async () => {
+    let newQuestion = currentQuestionsArray[Math.floor(Math.random() * 5)];
+    setCurrentQuestion(newQuestion);
+    return newQuestion;
+  };
 
-  const checkIfGuessIsCorrect = () => {
+  const checkIfGuessIsCorrect = async () => {
     let waitTime = 1000;
     if (guess.trim() === beginnerQuestions[currentQuestion].answer) {
       let copyBeginnerQuestions = beginnerQuestions;
@@ -141,7 +149,8 @@ export const Beginner = () => {
 
       checkIfcurrentQuestionsHaveReachCounterFiveAndUpdate(beginnerQuestions);
 
-      selectNewQuestionFromCurrentQuestions();
+      let newQuestion = await selectNewQuestionFromCurrentQuestions();
+      setCurrentAnswer(beginnerQuestions[newQuestion].answer);
 
       setUserInput({ guess: "" });
 
@@ -187,7 +196,9 @@ export const Beginner = () => {
 
         <div className="middle-b">
           <Banner />
+
           <div className="display-b">{currentQuestion}</div>
+          <MouseOverPopover currentAnswer={currentAnswer} />
           <form className="answer-form-b" onSubmit={(e) => onSubmit(e)}>
             <input
               className="answer-input-b"
@@ -196,6 +207,7 @@ export const Beginner = () => {
               value={guess}
               onChange={(e) => onChange(e)}
             />
+
             <input className="answer-button-b" type="submit" value="guess" />
           </form>
           <div className="correct-or-incorrect-b">{correctOrIncorrect}</div>

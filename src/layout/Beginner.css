@@ -146,6 +146,15 @@ section {
   opacity: 1;
 }
 
+.popover-holder {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+}
+
 /* font-family: 'Reenie Beanie', cursive;
  font-family: 'Roboto', sans-serif; */
 /*# sourceMappingURL=Beginner.css.map */
