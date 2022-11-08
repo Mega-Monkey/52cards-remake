@@ -16,7 +16,7 @@ export const Beginner = () => {
     {
       question: 0,
       answer: "s z",
-      counter: 4,
+      counter: 0,
       key: 0,
       counterChecker: ["", "", "", "", ""],
       isHidden: "",
@@ -24,7 +24,7 @@ export const Beginner = () => {
     {
       question: 1,
       answer: "l",
-      counter: 4,
+      counter: 0,
       key: 1,
       counterChecker: ["", "", "", "", ""],
       isHidden: "",

@@ -3,7 +3,7 @@ import React from "react";
 export const Form = ({handleSubmit, handleChange, guess}) => {
 
   return (
-    <form className="answer-form-b" onSubmit={(e) => handleSubmit(e)}>
+    <form className="answer-form-b" autocomplete="off" onSubmit={(e) => handleSubmit(e)}>
         <input
           className="answer-input-b"
           type="text"
