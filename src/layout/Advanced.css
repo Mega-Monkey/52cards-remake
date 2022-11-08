@@ -8,6 +8,15 @@ html {
   height: 100%;
 }
 
+/* .game-container {
+  position: absolute;
+  top: 20%;
+}
+
+.game-container > img {
+
+} */
+
 section {
   display: -webkit-box;
   display: -ms-flexbox;

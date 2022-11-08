@@ -1,20 +1,16 @@
 import React from "react";
 import { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
-import "./Beginner.css";
+import "./Intermediate.css";
 import { Banner } from "../components/Banner";
-import { CardDecoration } from "../components/CardDecoration";
-import { DisplayIsCorrect } from "../components/DisplayIsCorrect";
-import { QuestionDisplay } from "../components/QuestionDisplay";
-import { Form } from "../components/Form"
-
-
 import { ScoreKeeper } from "../components/ScoreKeeper";
 import MouseOverPopover from "../components/MouseOverPopover";
+import { CardDecoration } from "../components/CardDecoration";
+
+
 
 export const Intermediate = () => {
-
-  const [beginnerData, setBeginnerData] = useState([
+  const [intermediateData, setIntermediateData] = useState([
     {
       question: 0,
       answer: "zoo",
@@ -325,8 +321,7 @@ export const Intermediate = () => {
     guess: "",
   });
 
-  const [currentQuestions, setCurrentQuestions] = useState(
-    [
+  const [currentQuestionsArray, setCurrentQuestionsArray] = useState([
     0,
     1,
     2,
@@ -338,110 +333,95 @@ export const Intermediate = () => {
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
 
-  const [currentAnswer, setCurrentAnswer] = useState("zoo");
-
-  const [waitTime, setWaitTime] = useState(1000)
-
   const { guess } = userInput;
 
-  const upDateQuestionData = (array) => {
+  const [currentAnswer, setCurrentAnswer] = useState("zoo");
+
+
+  const checkIfcurrentQuestionsHaveReachCounterFiveAndUpdate = (array) => {
     let newQestions = [];
 
-    array.forEach(({counter, question}) => {
-      if (counter >= 5 || newQestions.length >= 5) {
+    array.forEach((elem) => {
+      if (elem.counter >= 5 || newQestions.length >= 5) {
         return;
       } else {
-        newQestions.push(question);
+        newQestions.push(elem.question);
       }
     });
-    setCurrentQuestions(newQestions);
+    setCurrentQuestionsArray(newQestions);
   };
 
-  const getNewQuestion = () => {
-    let newQuestion = currentQuestions[Math.floor(Math.random() * 5)];
-    setCurrentQuestion(newQuestion);
-    return newQuestion;
-  };
+  const selectNewQuestionFromCurrentQuestions = () =>
+    setCurrentQuestion(currentQuestionsArray[Math.floor(Math.random() * 5)]);
 
-  const handleCorrectGuess = () => {
-    setCorrectOrIncorrect("correct");
-    setTimeout(() => {
-      setCorrectOrIncorrect("");
-    }, waitTime);
-  }
+  const checkIfGuessIsCorrect = () => {
+    let waitTime = 1000;
+    if (guess.trim() === intermediateData[currentQuestion].answer) {
+      let copyIntermediateData = intermediateData;
 
-  const handleIncorrectGuess = () => {
-    setCorrectOrIncorrect("incorrect");
-    setTimeout(() => {
-      setCorrectOrIncorrect("");
-    }, waitTime);
-  }
+      copyIntermediateData[currentQuestion].counterChecker[
+        copyIntermediateData[currentQuestion].counter
+      ] = "visible";
 
-  const addScore = (data) => {
-    data[currentQuestion].counterChecker[
-      data[currentQuestion].counter
-    ] = "visible";
+      copyIntermediateData[currentQuestion].counter =
+        copyIntermediateData[currentQuestion].counter + 1;
 
-  }
+      setIntermediateData(copyIntermediateData);
 
-  const increaseCounter = (data) => {
-    data[currentQuestion].counter = data[currentQuestion].counter + 1;
-  }
+      checkIfcurrentQuestionsHaveReachCounterFiveAndUpdate(intermediateData);
 
-  const resetAfterGuess = async () => {
-    let newQuestion = await getNewQuestion();
-    setCurrentAnswer(beginnerData[newQuestion].answer);
-    setUserInput({ guess: "" });
-  }
+      selectNewQuestionFromCurrentQuestions();
 
-  const isGuessCorrect = async () => {
-    let dataCopy = beginnerData;
+      // setCurrentAnswer(intermediateData[newQuestion].answer);
 
-    if (guess.trim() === currentAnswer) {
-      
-      addScore(dataCopy)
-      
-      increaseCounter(dataCopy)
+      setUserInput({ guess: "" });
 
-      setBeginnerData(dataCopy);
+      setCorrectOrIncorrect("correct");
 
-      upDateQuestionData(beginnerData);
-
-      resetAfterGuess()
-
-      handleCorrectGuess()
-
+      setTimeout(() => {
+        setCorrectOrIncorrect("");
+      }, waitTime);
     } else {
-
-      resetAfterGuess()
-
-      handleIncorrectGuess()
-
+      setCorrectOrIncorrect("incorrect");
+      setTimeout(() => {
+        setCorrectOrIncorrect("");
+      }, waitTime);
     }
   };
 
-  const handleSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-    isGuessCorrect();
+    checkIfGuessIsCorrect();
   };
 
-  const handleChange = (e) => {
+  const onChange = (e) => {
     setUserInput({ guess: e.target.value });
   };
-
+  console.log(currentQuestion)
   return (
     <Fragment>
       <section>
         <CardDecoration />
-        <div className="middle-b">
+        <div className="middle">
           <Banner />
-          <QuestionDisplay currentQuestion={currentQuestion}/>
+          <div className="display">{currentQuestion}</div>
+
           <MouseOverPopover currentAnswer={currentAnswer} />
-          <Form handleSubmit={handleSubmit} handleChange={handleChange} guess={guess}/>
-          <DisplayIsCorrect correctOrIncorrect={correctOrIncorrect} />
+
+          <form className="answer-form" onSubmit={(e) => onSubmit(e)}>
+            <input
+              className="answer-input"
+              type="text"
+              name="answer"
+              value={guess}
+              onChange={(e) => onChange(e)}
+            />
+            <input className="answer-button" type="submit" value="guess" />
+          </form>
+          <div className="correct-or-incorrect">{correctOrIncorrect}</div>
         </div>
-        <div className="right-side-b">
-          <ScoreKeeper {...beginnerData} />
+        <div className="right-side">
+          <ScoreKeeper {...intermediateData} />
         </div>
       </section>
     </Fragment>

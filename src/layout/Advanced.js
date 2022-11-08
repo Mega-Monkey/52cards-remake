@@ -3,13 +3,20 @@ import { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Advanced.css";
 import { Banner } from "../components/Banner";
+import { CardDecoration } from "../components/CardDecoration";
+import { DisplayIsCorrect } from "../components/DisplayIsCorrect";
+import { QuestionDisplay } from "../components/QuestionDisplay";
 import { ScoreKeeperAdvanced } from "../components/ScoreKeeperAdvanced";
+import { Form } from "../components/Form"
+import { ScoreKeeper } from "../components/ScoreKeeper";
+import MouseOverPopover from "../components/MouseOverPopover";
 
 export const Advanced = () => {
-  const [questions, setQuestions] = useState([
+
+  const [beginnerData, setBeginnerData] = useState([
     {
       questionDisplay: "Ace of Hearts",
-      question: "/assets/images/cards/heart_2.png",
+      question: "/assets/images/cards/heart_a.png",
       answer: "love heart",
       counter: 0,
       key: 0,
@@ -18,7 +25,7 @@ export const Advanced = () => {
     },
     {
       questionDisplay: "2 of Hearts",
-      question: "/assets/images/cards/heart_3.png",
+      question: "/assets/images/cards/heart_2.png",
       answer: "lovers",
       counter: 0,
       key: 1,
@@ -27,7 +34,7 @@ export const Advanced = () => {
     },
     {
       questionDisplay: "3 of Hearts",
-      question: "/assets/images/cards/heart_4.png",
+      question: "/assets/images/cards/heart_3.png",
       answer: "home",
       counter: 0,
       key: 2,
@@ -36,7 +43,7 @@ export const Advanced = () => {
     },
     {
       questionDisplay: "4 of Hearts",
-      question: "/assets/images/cards/heart_5.png",
+      question: "/assets/images/cards/heart_4.png",
       answer: "hair",
       counter: 0,
       key: 3,
@@ -45,7 +52,7 @@ export const Advanced = () => {
     },
     {
       questionDisplay: "5 of Hearts",
-      question: "/assets/images/cards/heart_6.png",
+      question: "/assets/images/cards/heart_5.png",
       answer: "hoof",
       counter: 0,
       key: 4,
@@ -54,7 +61,7 @@ export const Advanced = () => {
     },
     {
       questionDisplay: "6 of Hearts",
-      question: "/assets/images/cards/heart_7.png",
+      question: "/assets/images/cards/heart_6.png",
       answer: "hoop",
       counter: 0,
       key: 5,
@@ -63,7 +70,7 @@ export const Advanced = () => {
     },
     {
       questionDisplay: "7 of Hearts",
-      question: "/assets/images/cards/heart_8.png",
+      question: "/assets/images/cards/heart_7.png",
       answer: "hat",
       counter: 0,
       key: 6,
@@ -72,7 +79,7 @@ export const Advanced = () => {
     },
     {
       questionDisplay: "8 of Hearts",
-      question: "/assets/images/cards/heart_9.png",
+      question: "/assets/images/cards/heart_8.png",
       answer: "hedge",
       counter: 0,
       key: 7,
@@ -81,7 +88,7 @@ export const Advanced = () => {
     },
     {
       questionDisplay: "9 of Hearts",
-      question: "/assets/images/cards/heart_10.png",
+      question: "/assets/images/cards/heart_9.png",
       answer: "hag",
       counter: 0,
       key: 8,
@@ -90,7 +97,7 @@ export const Advanced = () => {
     },
     {
       questionDisplay: "10 of Hearts",
-      question: "/assets/images/cards/heart_j.png",
+      question: "/assets/images/cards/heart_10.png",
       answer: "horse",
       counter: 0,
       key: 9,
@@ -99,7 +106,7 @@ export const Advanced = () => {
     },
     {
       questionDisplay: "Jack of Hearts",
-      question: "/assets/images/cards/heart_q.png",
+      question: "/assets/images/cards/heart_j.png",
       answer: "cupid",
       counter: 0,
       key: 10,
@@ -108,7 +115,7 @@ export const Advanced = () => {
     },
     {
       questionDisplay: "Queen of Hearts",
-      question: "/assets/images/cards/heart_k.png",
+      question: "/assets/images/cards/heart_q.png",
       answer: "bride",
       counter: 0,
       key: 11,
@@ -117,7 +124,7 @@ export const Advanced = () => {
     },
     {
       questionDisplay: "King of Hearts",
-      question: "/assets/images/cards/heart_a.png",
+      question: "/assets/images/cards/heart_k.png",
       answer: "bridegroom",
       counter: 0,
       key: 12,
@@ -130,7 +137,8 @@ export const Advanced = () => {
     guess: "",
   });
 
-  const [currentQuestionsArray, setCurrentQuestionsArray] = useState([
+  const [currentQuestions, setCurrentQuestions] = useState(
+    [
     0,
     1,
     2,
@@ -142,111 +150,117 @@ export const Advanced = () => {
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
 
-  // const [uniqueIdentifier, setUniqueIdentifier] = useState({ indentfier: "a" });
+  const [currentAnswer, setCurrentAnswer] = useState("love heart");
+
+  const [waitTime, setWaitTime] = useState(1000)
 
   const { guess } = userInput;
 
-  const checkIfcurrentQuestionsHaveReachCounterFiveAndUpdate = (array) => {
+  const upDateQuestionData = (array) => {
     let newQestions = [];
 
-    array.forEach((elem) => {
-      if (elem.counter >= 5 || newQestions.length >= 5) {
+    array.forEach(({counter, key}) => {
+      if (counter >= 5 || newQestions.length >= 5) {
         return;
       } else {
-        newQestions.push(elem.question);
+        newQestions.push(key);
       }
     });
-    // console.log(newQestions);
-    setCurrentQuestionsArray(newQestions);
+    setCurrentQuestions(newQestions);
   };
 
-  const selectNewQuestionFromCurrentQuestions = () =>
-    setCurrentQuestion(currentQuestionsArray[Math.floor(Math.random() * 5)]);
+  const getNewQuestion = () => {
+    let newQuestion = currentQuestions[Math.floor(Math.random() * 5)];
+    setCurrentQuestion(newQuestion);
+    return newQuestion;
+  };
 
-  const checkIfGuessIsCorrect = () => {
-    let waitTime = 1000;
-    if (guess.trim() === questions[currentQuestion].answer) {
-      let copyQuestions = questions;
+  const handleCorrectGuess = () => {
+    setCorrectOrIncorrect("correct");
+    setTimeout(() => {
+      setCorrectOrIncorrect("");
+    }, waitTime);
+  }
 
-      copyQuestions[currentQuestion].counterChecker[
-        copyQuestions[currentQuestion].counter
-      ] = "visible";
+  const handleIncorrectGuess = () => {
+    setCorrectOrIncorrect("incorrect");
+    setTimeout(() => {
+      setCorrectOrIncorrect("");
+    }, waitTime);
+  }
 
-      copyQuestions[currentQuestion].counter =
-        copyQuestions[currentQuestion].counter + 1;
+  const addScore = (data) => {
+    data[currentQuestion].counterChecker[
+      data[currentQuestion].counter
+    ] = "visible";
 
-      setQuestions(copyQuestions);
+  }
 
-      checkIfcurrentQuestionsHaveReachCounterFiveAndUpdate(questions);
+  const increaseCounter = (data) => {
+    data[currentQuestion].counter = data[currentQuestion].counter + 1;
+  }
 
-      selectNewQuestionFromCurrentQuestions();
+  const resetAfterGuess = async () => {
+    let newQuestion = await getNewQuestion();
+    console.log('new question ', newQuestion)
+    console.log('answer', beginnerData[newQuestion].answer)
+    setCurrentAnswer(beginnerData[newQuestion].answer);
+    setUserInput({ guess: "" });
+  }
 
-      setUserInput({ guess: "" });
+  const isGuessCorrect = async () => {
+    let dataCopy = beginnerData;
 
-      setCorrectOrIncorrect("correct");
+    if (guess.trim() === currentAnswer) {
+      
+      addScore(dataCopy)
+      
+      increaseCounter(dataCopy)
 
-      setTimeout(() => {
-        setCorrectOrIncorrect("");
-      }, waitTime);
+      setBeginnerData(dataCopy);
+
+      upDateQuestionData(beginnerData);
+
+      resetAfterGuess()
+
+      handleCorrectGuess()
+
     } else {
-      setCorrectOrIncorrect("incorrect");
-      setTimeout(() => {
-        setCorrectOrIncorrect("");
-      }, waitTime);
+
+      resetAfterGuess()
+
+      handleIncorrectGuess()
+
     }
   };
 
-  const onSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    checkIfGuessIsCorrect();
+    isGuessCorrect();
   };
 
-  const onChange = (e) => {
+  const handleChange = (e) => {
     setUserInput({ guess: e.target.value });
   };
 
   return (
     <Fragment>
       <section>
-        <div className="left-side-a">
-          <div className="card-logo-a">
-            <img
-              className="heart-5-a"
-              src="/assets/images/cards/heart_5.png"
-              alt=""
-            />
-            <img
-              className="spade-2-a"
-              src="/assets/images/cards/spade_2.png"
-              alt=""
-            />
-          </div>
-        </div>
+        <CardDecoration />
         <div className="middle-a">
           <Banner />
-          <div className="display-a">
-            <img src={questions[currentQuestion].question} alt="" />
-          </div>
-          <form className="answer-form-a" onSubmit={(e) => onSubmit(e)}>
-            <input
-              className="answer-input-a"
-              type="text"
-              name="answer"
-              value={guess}
-              onChange={(e) => onChange(e)}
-            />
-            <input className="answer-button-a" type="submit" value="guess" />
-          </form>
-          <div className="correct-or-incorrect">{correctOrIncorrect}</div>
-          {/* <div className="containerProgressBar">
-          {Object.entries(questions).map(function (letter) {
-            console.log(letter[1].counter);
-            return <ProgressBar counter={letter[1].counter} />;
-          })}
-        </div> */}
+            <div className="display-a">
+
+            <img src={beginnerData[currentQuestion].question} alt="" />
+            </div>
+            <MouseOverPopover currentAnswer={currentAnswer} />
+            <Form handleSubmit={handleSubmit} handleChange={handleChange} guess={guess}/>
+            <DisplayIsCorrect correctOrIncorrect={correctOrIncorrect} />
+       
         </div>
-        <div className="right-side-a">
-          <ScoreKeeperAdvanced {...questions} />
+        <div className="right-side-b">
+          <ScoreKeeperAdvanced {...beginnerData} />
+          
         </div>
       </section>
     </Fragment>
@@ -254,3 +268,4 @@ export const Advanced = () => {
 };
 
 export default Advanced;
+

@@ -11,7 +11,6 @@ export const ScoreKeeperAdvanced = (props) => {
       </div>
       <div className="question-score-sheet-container">
         <div className="question-sheet">
-          {console.log(props)}
           {Object.entries(props).map(function (letter) {
             return (
               <div

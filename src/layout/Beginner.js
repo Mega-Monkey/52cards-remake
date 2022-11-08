@@ -3,15 +3,20 @@ import { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Beginner.css";
 import { Banner } from "../components/Banner";
+import { CardDecoration } from "../components/CardDecoration";
+import { DisplayIsCorrect } from "../components/DisplayIsCorrect";
+import { QuestionDisplay } from "../components/QuestionDisplay";
+import { Form } from "../components/Form"
 import { ScoreKeeper } from "../components/ScoreKeeper";
 import MouseOverPopover from "../components/MouseOverPopover";
 
 export const Beginner = () => {
-  const [beginnerQuestions, setBeginnerQuestions] = useState([
+
+  const [beginnerData, setBeginnerData] = useState([
     {
       question: 0,
       answer: "s z",
-      counter: 0,
+      counter: 4,
       key: 0,
       counterChecker: ["", "", "", "", ""],
       isHidden: "",
@@ -19,7 +24,7 @@ export const Beginner = () => {
     {
       question: 1,
       answer: "l",
-      counter: 0,
+      counter: 4,
       key: 1,
       counterChecker: ["", "", "", "", ""],
       isHidden: "",
@@ -94,7 +99,8 @@ export const Beginner = () => {
     guess: "",
   });
 
-  const [currentQuestionsArray, setCurrentQuestionsArray] = useState([
+  const [currentQuestions, setCurrentQuestions] = useState(
+    [
     0,
     1,
     2,
@@ -106,120 +112,110 @@ export const Beginner = () => {
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
 
-  const [currentAnswer, setCurrentAnswer] = useState(
-    beginnerQuestions[currentQuestion].answer
-  );
+  const [currentAnswer, setCurrentAnswer] = useState("s z");
+
+  const [waitTime, setWaitTime] = useState(1000)
 
   const { guess } = userInput;
 
-  const checkIfcurrentQuestionsHaveReachCounterFiveAndUpdate = (array) => {
+  const upDateQuestionData = (array) => {
     let newQestions = [];
 
-    array.forEach((elem) => {
-      debugger;
-      if (elem.counter >= 5 || newQestions.length >= 5) {
+    array.forEach(({counter, question}) => {
+      if (counter >= 5 || newQestions.length >= 5) {
         return;
       } else {
-        newQestions.push(elem.question);
+        newQestions.push(question);
       }
     });
-    // console.log(newQestions);
-    setCurrentQuestionsArray(newQestions);
+    setCurrentQuestions(newQestions);
   };
 
-  const selectNewQuestionFromCurrentQuestions = async () => {
-    let newQuestion = currentQuestionsArray[Math.floor(Math.random() * 5)];
+  const getNewQuestion = () => {
+    let newQuestion = currentQuestions[Math.floor(Math.random() * 5)];
     setCurrentQuestion(newQuestion);
     return newQuestion;
   };
 
-  const checkIfGuessIsCorrect = async () => {
-    let waitTime = 1000;
-    if (guess.trim() === beginnerQuestions[currentQuestion].answer) {
-      let copyBeginnerQuestions = beginnerQuestions;
+  const handleCorrectGuess = () => {
+    setCorrectOrIncorrect("correct");
+    setTimeout(() => {
+      setCorrectOrIncorrect("");
+    }, waitTime);
+  }
 
-      copyBeginnerQuestions[currentQuestion].counterChecker[
-        copyBeginnerQuestions[currentQuestion].counter
-      ] = "visible";
+  const handleIncorrectGuess = () => {
+    setCorrectOrIncorrect("incorrect");
+    setTimeout(() => {
+      setCorrectOrIncorrect("");
+    }, waitTime);
+  }
 
-      copyBeginnerQuestions[currentQuestion].counter =
-        copyBeginnerQuestions[currentQuestion].counter + 1;
+  const addScore = (data) => {
+    data[currentQuestion].counterChecker[
+      data[currentQuestion].counter
+    ] = "visible";
 
-      setBeginnerQuestions(copyBeginnerQuestions);
+  }
 
-      checkIfcurrentQuestionsHaveReachCounterFiveAndUpdate(beginnerQuestions);
+  const increaseCounter = (data) => {
+    data[currentQuestion].counter = data[currentQuestion].counter + 1;
+  }
 
-      let newQuestion = await selectNewQuestionFromCurrentQuestions();
-      setCurrentAnswer(beginnerQuestions[newQuestion].answer);
+  const resetAfterGuess = async () => {
+    let newQuestion = await getNewQuestion();
+    setCurrentAnswer(beginnerData[newQuestion].answer);
+    setUserInput({ guess: "" });
+  }
 
-      setUserInput({ guess: "" });
+  const isGuessCorrect = async () => {
+    let dataCopy = beginnerData;
 
-      setCorrectOrIncorrect("correct");
+    if (guess.trim() === currentAnswer) {
+      
+      addScore(dataCopy)
+      
+      increaseCounter(dataCopy)
 
-      setTimeout(() => {
-        setCorrectOrIncorrect("");
-      }, waitTime);
+      setBeginnerData(dataCopy);
+
+      upDateQuestionData(beginnerData);
+
+      resetAfterGuess()
+
+      handleCorrectGuess()
+
     } else {
-      setCorrectOrIncorrect("incorrect");
-      setTimeout(() => {
-        setCorrectOrIncorrect("");
-      }, waitTime);
+
+      resetAfterGuess()
+
+      handleIncorrectGuess()
+
     }
   };
 
-  const onSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    checkIfGuessIsCorrect();
+    isGuessCorrect();
   };
 
-  const onChange = (e) => {
+  const handleChange = (e) => {
     setUserInput({ guess: e.target.value });
   };
 
   return (
     <Fragment>
       <section>
-        <div className="left-side-b">
-          <div className="card-logo-b">
-            <img
-              className="heart-5-b"
-              src="/assets/images/cards/heart_5.png"
-              alt=""
-            />
-            <img
-              className="spade-2-b"
-              src="/assets/images/cards/spade_2.png"
-              alt=""
-            />
-          </div>
-        </div>
-
+        <CardDecoration />
         <div className="middle-b">
           <Banner />
-
-          <div className="display-b">{currentQuestion}</div>
+          <QuestionDisplay currentQuestion={currentQuestion}/>
           <MouseOverPopover currentAnswer={currentAnswer} />
-          <form className="answer-form-b" onSubmit={(e) => onSubmit(e)}>
-            <input
-              className="answer-input-b"
-              type="text"
-              name="answer"
-              value={guess}
-              onChange={(e) => onChange(e)}
-            />
-
-            <input className="answer-button-b" type="submit" value="guess" />
-          </form>
-          <div className="correct-or-incorrect-b">{correctOrIncorrect}</div>
-          {/* <div className="containerProgressBar">
-          {Object.entries(beginnerQuestions).map(function (letter) {
-            console.log(letter[1].counter);
-            return <ProgressBar counter={letter[1].counter} />;
-          })}
-        </div> */}
+          <Form handleSubmit={handleSubmit} handleChange={handleChange} guess={guess}/>
+          <DisplayIsCorrect correctOrIncorrect={correctOrIncorrect} />
         </div>
         <div className="right-side-b">
-          <ScoreKeeper {...beginnerQuestions} />
+          <ScoreKeeper {...beginnerData} />
         </div>
       </section>
     </Fragment>

@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MouseOverPopover(props) {
+export const MouseOverPopover = (props) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -61,3 +61,5 @@ export default function MouseOverPopover(props) {
     </div>
   );
 }
+
+export default MouseOverPopover
